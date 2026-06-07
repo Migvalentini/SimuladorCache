@@ -1,20 +1,6 @@
 [
     [
         {
-            "valido": true,
-            "rotulo": 25,
-            "dirty": 1,
-            "lru": 2
-        },
-        {
-            "valido": true,
-            "rotulo": 84,
-            "dirty": 0,
-            "lru": 1
-        }
-    ],
-    [
-        {
             "valido": false,
             "rotulo": null,
             "dirty": 0,
@@ -71,10 +57,24 @@
     ],
     [
         {
-            "valido": true,
-            "rotulo": 1024,
+            "valido": false,
+            "rotulo": null,
             "dirty": 0,
-            "lru": 1
+            "lru": 0
+        },
+        {
+            "valido": false,
+            "rotulo": null,
+            "dirty": 0,
+            "lru": 0
+        }
+    ],
+    [
+        {
+            "valido": false,
+            "rotulo": null,
+            "dirty": 0,
+            "lru": 0
         },
         {
             "valido": false,

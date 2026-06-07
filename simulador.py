@@ -16,14 +16,10 @@ import math
 import json
 
 def salvar_cache_como_json(cache, nome_arquivo="cache_real.json"):
-    # json.dumps transforma a estrutura de dados (listas e dicts) em uma string JSON
-    # 'indent=4' organiza o arquivo com recuos, tornando-o humano e legível
     cache_json = json.dumps(cache, indent=4)
     
     with open(nome_arquivo, "w", encoding="utf-8") as f:
         f.write(cache_json)
-        
-    print(f"Estrutura real da cache exportada com sucesso para '{nome_arquivo}'!")
 
 def salvar_estado_cache(cache, nome_arquivo="visualizacao_cache.txt"):
     with open(nome_arquivo, "w", encoding="utf-8") as f:
@@ -32,36 +28,28 @@ def salvar_estado_cache(cache, nome_arquivo="visualizacao_cache.txt"):
         f.write(f"Linhas por Conjunto (Vias): {len(cache[0])}\n")
         f.write("-" * 50 + "\n\n")
         
-        # Varre cada conjunto da cache
         for i_conjunto, conjunto in enumerate(cache):
             f.write(f"Conjunto {i_conjunto:04d}:\n")
             
-            # Varre cada linha (via) daquele conjunto
             for i_linha, linha in enumerate(conjunto):
                 status = "VÁLIDO" if linha["valido"] else "INVAL"
                 
-                # Formata o rótulo: se for None mostra '--------', se tiver número mostra em Hex/Decimal
                 if linha["rotulo"] is not None:
                     rotulo_str = f"0x{linha['rotulo']:04X} ({linha['rotulo']})"
                 else:
                     rotulo_str = "--------"
                 
-                # Cria a linha de texto bonitinha e alinhada
                 f.write(f"  [Via {i_linha}] Status: {status} | Rótulo: {rotulo_str:<12} | Dirty: {linha['dirty']} | LRU: {linha['lru']}\n")
             
             f.write("  " + "-" * 45 + "\n")
-            
-    print(f"Estado da cache exportado com sucesso para '{nome_arquivo}'!")
 
-print("Digite as configurações da memória cache (política de escrita, tamanho da linha, número de linhas, associatividade, tempo de acesso, política de substituição) e da memória principal (tempo de leitura/escrita):")
-input = input().split()
-politicaescrita = int(input[0])
-tamanholinha = int(input[1])
-numerolinhas = int(input[2])
-associatividade = int(input[3])
-tempoacesso = int(input[4])
-politicasubstituicao = input[5]
-tempomemoria = int(input[6])
+politicaescrita = 0
+tamanholinha = 64
+numerolinhas = 4096
+associatividade = 2
+tempoacesso = 10
+politicasubstituicao = "LRU"
+tempomemoria = 80
 
 enderecocache = 32 # Número fixo pelo enunciado
 numero_conjuntos = int(numerolinhas / associatividade)
@@ -76,9 +64,10 @@ print(f"Número de linhas: {numerolinhas}")
 print(f"Associatividade: {associatividade}")
 print(f"Tempo de acesso: {tempoacesso} ns")
 print(f"Política de substituição: {politicasubstituicao}")
-
+print(f"Tempo de leitura/escrita: {tempomemoria} ns")
+print(f"Tamanho do endereço: {enderecocache} bits")
+print(f"Número de conjuntos: {numero_conjuntos}")
 print(f"\nNúmero de bits para o rótulo: {rotulo}" + f"\nNúmero de bits para o conjunto: {conjunto}" + f"\nNúmero de bits para a palavra: {palavra}")
-
 
 cache = []
 
@@ -94,14 +83,8 @@ for c in range(numero_conjuntos):
         conjunto_atual.append(linha)
     cache.append(conjunto_atual)
     
-salvar_estado_cache(cache, "cache_inicial.txt")
-
-cache[0][0] = {"valido": True, "rotulo": 25, "dirty": 1, "lru": 2}
-cache[0][1] = {"valido": True, "rotulo": 84, "dirty": 0, "lru": 1}
-cache[5][0] = {"valido": True, "rotulo": 1024, "dirty": 0, "lru": 1}
-
-salvar_estado_cache(cache, "cache_com_dados.txt")
-salvar_cache_como_json(cache, "cache_real.json")
+salvar_estado_cache(cache, "cache.txt")
+salvar_cache_como_json(cache, "cache.json")
     
 enderecosescrita = 0
 enderecosleitura = 0
@@ -122,31 +105,46 @@ with open("teste.txt") as f:
     conjunto_int = int(enderecoconjunto, 2)
     linha_int = int(enderecolinha, 2)
     
-    print("Endereço: " + str(endereco) + " - Operação: " + operacao + " - Binário: " + binario + " - Rótulo: " + enderecorotulo + " (" + str(rotulo_int) + ")" + " - Conjunto: " + enderecoconjunto + " (" + str(conjunto_int) + ")" + " - Linha: " + enderecolinha + " (" + str(linha_int) + ")")
+    print("Endereço: " + str(endereco) + 
+          " - Operação: " + operacao + 
+          " - Binário: " + binario + 
+          " - Rótulo: " + enderecorotulo + " (" + str(rotulo_int) + ")" + 
+          " - Conjunto: " + enderecoconjunto + " (" + str(conjunto_int) + ")" + 
+          " - Linha: " + enderecolinha + " (" + str(linha_int) + ")")
     
     conjunto_alvo = cache[conjunto_int] 
     hit = False
-
-    # Percorre as vias do conjunto X
+    
     for linha in conjunto_alvo:
+        print(linha)
         if linha["valido"] == True and linha["rotulo"] == rotulo_int:
             hit = True
             linha_atingida = linha
             break
 
     if hit:
-        print("Sucesso! O bloco 985 já estava no conjunto 270. Temos um HIT.")
-        # Aqui você atualiza o LRU e trata se for escrita (W)
+        print(f"Sucesso! O bloco {rotulo_int} já estava no conjunto {conjunto_int}. Temos um HIT.")
+        if politicasubstituicao == "LRU":
+            for l in conjunto_alvo:
+                if l["lru"] < linha_atingida["lru"]:
+                    l["lru"] += 1
+            linha_atingida["lru"] = 0
+        if operacao == "W":
+            enderecosescrita += 1
+            if politicaescrita == 1:
+                linha_atingida["dirty"] = 1
+        else:
+            enderecosleitura += 1
     else:
-        print("O bloco 985 não está aqui. Temos um MISS.")
-        # Aqui você aplica a lógica de carregar o bloco da Memória Principal
-    
-    if operacao == "W":
-        enderecosescrita += 1
-    elif operacao == "R":
-        enderecosleitura += 1
+        print(f"O bloco {rotulo_int} não está aqui. Temos um MISS.")
+        if operacao == "W":
+            enderecosescrita += 1
+        else:
+            enderecosleitura += 1
     
     i += 1
+    
+    break
 
 #ts = ℎ × 𝑡1 + (1 − ℎ) × (𝑡1 + 𝑡2)
 #   = 𝑡1 + (1 − ℎ) × 𝑡2
