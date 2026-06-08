@@ -1,27 +1,28 @@
-#Memória Cache:
-# 1 - Política de escrita: 0 - write-through e 1 - write-back;
-# 2 - Tamanho da linha: deve ser potência de 2, em bytes;
-# 3 - Número de linhas: deve ser potência de 2;
-# 4 - Associatividade (número de linhas) por conjunto: deve ser potência de 2 (mínimo 1 e máximo igual ao número de linhas);
-# 5 - Tempo de acesso quando encontra (hit time): em nanossegundos;
-# 6 - Política de Substituição: LRU (Least Recently Used) ou Aleatória;
-
-#Memória Principal:
-# 7 - Tempos de leitura/escrita: em nanossegundos.
-
-
-# 0 64 4096 2 10 LRU 80
-
 import math
-import json
+import random
 
-def salvar_cache_como_json(cache, nome_arquivo="cache_real.json"):
-    cache_json = json.dumps(cache, indent=4)
-    
-    with open(nome_arquivo, "w", encoding="utf-8") as f:
-        f.write(cache_json)
+#Para 8 linhas (Cache 1KB):   0 128   8 4 4 LRU 60
+#Para 16 linhas (Cache 2KB):  0 128  16 4 4 LRU 60
+#Para 32 linhas (Cache 4KB):  0 128  32 4 4 LRU 60
+#Para 64 linhas (Cache 8KB):  0 128  64 4 4 LRU 60
+#Para 128 linhas (Cache 16KB):0 128 128 4 4 LRU 60
+#Para 256 linhas (Cache 32KB):0 128 256 4 4 LRU 60
 
-def salvar_estado_cache(cache, nome_arquivo="visualizacao_cache.txt"):
+politicaescrita = 0
+tamanholinha = 128
+numerolinhas = 256
+associatividade = 4
+tempoacesso = 4 # fixo para todas as simulações
+politicasubstituicao = "LRU"
+tempomemoria = 60 # fixo para todas as simulações
+
+teste = True
+if teste:
+    simulacoes = "simulacoes/teste.txt"
+else:
+    simulacoes = "simulacoes/oficial.txt"
+
+def salvar_estado_cache(cache, nome_arquivo):
     with open(nome_arquivo, "w", encoding="utf-8") as f:
         f.write("=== VISUALIZAÇÃO DA MEMÓRIA CACHE ===\n")
         f.write(f"Total de Conjuntos: {len(cache)}\n")
@@ -31,25 +32,15 @@ def salvar_estado_cache(cache, nome_arquivo="visualizacao_cache.txt"):
         for i_conjunto, conjunto in enumerate(cache):
             f.write(f"Conjunto {i_conjunto:04d}:\n")
             
-            for i_linha, linha in enumerate(conjunto):
-                status = "VÁLIDO" if linha["valido"] else "INVAL"
-                
+            for i_linha, linha in enumerate(conjunto):                
                 if linha["rotulo"] is not None:
                     rotulo_str = f"0x{linha['rotulo']:04X} ({linha['rotulo']})"
                 else:
                     rotulo_str = "--------"
                 
-                f.write(f"  [Via {i_linha}] Status: {status} | Rótulo: {rotulo_str:<12} | Dirty: {linha['dirty']} | LRU: {linha['lru']}\n")
+                f.write(f"  [Via {i_linha}] Rótulo: {rotulo_str:<12} | Dirty: {linha['dirty']} | LRU: {linha['lru']}\n")
             
             f.write("  " + "-" * 45 + "\n")
-
-politicaescrita = 0
-tamanholinha = 64
-numerolinhas = 4096
-associatividade = 2
-tempoacesso = 10
-politicasubstituicao = "LRU"
-tempomemoria = 80
 
 enderecocache = 32 # Número fixo pelo enunciado
 numero_conjuntos = int(numerolinhas / associatividade)
@@ -57,39 +48,31 @@ palavra = int(math.log2(tamanholinha)) # Número de bits para a palavra
 conjunto = int(math.log2(numero_conjuntos)) # Número de bits para o conjunto
 rotulo = int(enderecocache - palavra - conjunto) # Número de bits para o rótulo
 
-print(f"Configurações da memória cache e memória principal:")
-print(f"Política de escrita: {politicaescrita}")
-print(f"Tamanho da linhas: {tamanholinha}")
-print(f"Número de linhas: {numerolinhas}")
-print(f"Associatividade: {associatividade}")
-print(f"Tempo de acesso: {tempoacesso} ns")
-print(f"Política de substituição: {politicasubstituicao}")
-print(f"Tempo de leitura/escrita: {tempomemoria} ns")
-print(f"Tamanho do endereço: {enderecocache} bits")
-print(f"Número de conjuntos: {numero_conjuntos}")
-print(f"\nNúmero de bits para o rótulo: {rotulo}" + f"\nNúmero de bits para o conjunto: {conjunto}" + f"\nNúmero de bits para a palavra: {palavra}")
-
 cache = []
 
+# Inicialização da cache
 for c in range(numero_conjuntos):
     conjunto_atual = []
     for l in range(associatividade):
         linha = {
-            "valido": False,
             "rotulo": None,
             "dirty": 0,
             "lru": 0
         }
         conjunto_atual.append(linha)
     cache.append(conjunto_atual)
-    
-salvar_estado_cache(cache, "cache.txt")
-salvar_cache_como_json(cache, "cache.json")
-    
-enderecosescrita = 0
-enderecosleitura = 0
+
+# Variáveis para estatísticas
+leiturasMP = 0
+escritasMP = 0
+hitLeitura = 0
+hitEscrita = 0
+escritas = 0
+leituras = 0
 i = 0
-with open("teste.txt") as f:
+
+# Processamento do arquivo de simulações
+with open(simulacoes) as f:
   for x in f:
     endereco = x.split()[0]
     operacao = x.split()[1]
@@ -99,77 +82,126 @@ with open("teste.txt") as f:
     
     enderecorotulo = binario[:-(palavra + conjunto)]
     enderecoconjunto = binario[-(palavra + conjunto):-palavra]
-    enderecolinha = binario[-palavra:]
+    enderecopalavra = binario[-palavra:]
     
     rotulo_int = int(enderecorotulo, 2)
     conjunto_int = int(enderecoconjunto, 2)
-    linha_int = int(enderecolinha, 2)
-    
-    print("Endereço: " + str(endereco) + 
-          " - Operação: " + operacao + 
-          " - Binário: " + binario + 
-          " - Rótulo: " + enderecorotulo + " (" + str(rotulo_int) + ")" + 
-          " - Conjunto: " + enderecoconjunto + " (" + str(conjunto_int) + ")" + 
-          " - Linha: " + enderecolinha + " (" + str(linha_int) + ")")
+    palavra_int = int(enderecopalavra, 2)
     
     conjunto_alvo = cache[conjunto_int] 
     hit = False
     
     for linha in conjunto_alvo:
-        print(linha)
-        if linha["valido"] == True and linha["rotulo"] == rotulo_int:
+        if linha["rotulo"] == rotulo_int:
             hit = True
             linha_atingida = linha
             break
 
     if hit:
-        print(f"Sucesso! O bloco {rotulo_int} já estava no conjunto {conjunto_int}. Temos um HIT.")
+        if teste:
+            print(f"HIT  | O bloco {rotulo_int:08d}  já estava no conjunto {conjunto_int:08d} | Endereço: {endereco} | Operação: {operacao} - Binário: {enderecorotulo}|{enderecoconjunto}|{enderecopalavra} - Rótulo: {enderecorotulo} ({rotulo_int:08d}) - Conjunto: {enderecoconjunto} ({conjunto_int:08d}) - Palavra: {enderecopalavra} ({palavra_int:08d})")
         if politicasubstituicao == "LRU":
             for l in conjunto_alvo:
                 if l["lru"] < linha_atingida["lru"]:
                     l["lru"] += 1
             linha_atingida["lru"] = 0
         if operacao == "W":
-            enderecosescrita += 1
-            if politicaescrita == 1:
+            hitEscrita += 1
+            escritas += 1
+            if politicaescrita == 1: #'write-back'
                 linha_atingida["dirty"] = 1
         else:
-            enderecosleitura += 1
+            leituras += 1
+            hitLeitura += 1
     else:
-        print(f"O bloco {rotulo_int} não está aqui. Temos um MISS.")
+        if teste:
+            print(f"MISS | O bloco {rotulo_int:08d} não estava no conjunto {conjunto_int:08d} | Endereço: {endereco} | Operação: {operacao} - Binário: {enderecorotulo}|{enderecoconjunto}|{enderecopalavra} - Rótulo: {enderecorotulo} ({rotulo_int:08d}) - Conjunto: {enderecoconjunto} ({conjunto_int:08d}) - Palavra: {enderecopalavra} ({palavra_int:08d})")        
+
         if operacao == "W":
-            enderecosescrita += 1
+            escritas += 1
         else:
-            enderecosleitura += 1
-    
+            leituras += 1
+        
+        leiturasMP += 1
+        
+        linha_alvo = None
+        for linha in conjunto_alvo:
+            if linha["rotulo"] is None:
+                linha_alvo = linha
+                break
+        
+        if linha_alvo is None:
+            if politicasubstituicao == "LRU":
+                linha_alvo = max(conjunto_alvo, key=lambda l: l["lru"])
+            else: # Aleatória
+                linha_alvo = random.choice(conjunto_alvo)
+            
+            if politicaescrita == 1 and linha_alvo["dirty"] == 1:
+                escritasMP += 1
+
+        if politicasubstituicao == "LRU":
+            for l in conjunto_alvo:
+                if l != linha_alvo:
+                    l["lru"] += 1
+        
+        linha_alvo["rotulo"] = rotulo_int
+        linha_alvo["lru"] = 0
+        
+        if operacao == "W":
+            if politicaescrita == 0:   # 'write-through'
+                linha_alvo["dirty"] = 0
+                escritasMP += 1
+            elif politicaescrita == 1: # 'write-back'
+                linha_alvo["dirty"] = 1
+        else:
+            linha_alvo["dirty"] = 0
+
     i += 1
     
-    break
+if politicaescrita == 1: # 'write-back'
+    for conj in cache:
+        for linha in conj:
+            if linha["rotulo"] is not None and linha["dirty"] == 1:
+                escritasMP += 1
 
-#ts = ℎ × 𝑡1 + (1 − ℎ) × (𝑡1 + 𝑡2)
-#   = 𝑡1 + (1 − ℎ) × 𝑡2
+salvar_estado_cache(cache,  "dados/resultado.txt")
 
-#onde
-#h = taxa de acerto
-#t1 = tempo de acesso da M1 (cache, cache de disco,..)
-#t2 = tempo de acesso de M2 (memória principal, disco)
+print("\n=== PARÂMETROS DE ENTRADA ===")
+print(f"Política de escrita: {politicaescrita} = {'write-through' if politicaescrita == 0 else 'write-back'}")
+print(f"Tamanho da linhas: {tamanholinha}")
+print(f"Número de linhas: {numerolinhas}")
+print(f"Associatividade: {associatividade}")
+print(f"Tempo de acesso: {tempoacesso} ns")
+print(f"Política de substituição: {politicasubstituicao}")
+print(f"Tempo de leitura/escrita: {tempomemoria} ns")
+
+if teste:
+    print("\n=== CÁLCULOS PARA A CONFIGURAÇÃO DA CACHE ===")
+    print(f"Tamanho do endereço: {enderecocache} bits")
+    print(f"Número de conjuntos: {numero_conjuntos}")
+    print(f"Número de bits para o rótulo: {rotulo}")
+    print(f"Número de bits para o conjunto: {conjunto}")
+    print(f"Número de bits para a palavra: {palavra}")
+
+print("\n=== RESULTADOS DA SIMULAÇÃO ===")
+print(f"Total de endereços no arquivo de entrada: {i}")
+print(f"Total de escritas: {escritas}")
+print(f"Total de leituras: {leituras}")
+print(f"Total de escritas da memória principal: {escritasMP}")
+print(f"Total de leituras da memória principal: {leiturasMP}")
+
+total_hits = hitLeitura + hitEscrita
+taxa_hit_global  = (total_hits / i) if i > 0 else 0.0
+taxa_hit_leitura = (hitLeitura / leituras) if leituras > 0 else 0.0
+taxa_hit_escrita = (hitEscrita / escritas) if escritas > 0 else 0.0
+taxa_miss_global = 1.0 - taxa_hit_global  
+tempo_medio_acesso = tempoacesso + (taxa_miss_global * tempomemoria)
+
+print("\n=== ESTATÍSTICAS FINAIS ===")
+print(f"Taxa de acerto global:  {taxa_hit_global * 100:.4f}% ({total_hits})")
+print(f"Taxa de acerto leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura})")
+print(f"Taxa de acerto escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita})")
+print(f"Tempo médio de acesso:  {tempo_medio_acesso:.4f} ns")
 
 
-print("Parâmetros de entrada:")
-print("Política de escrita: " + ("write-through" if politicaescrita == 0 else "write-back"))
-print("Tamanho da linha: " + str(tamanholinha) + " bytes")
-print("Número de linhas: " + str(numerolinhas))
-print("Associatividade (número de linhas) por conjunto: " + str(associatividade))
-print("Tempo de acesso quando encontra (hit time): " + str(tempoacesso) + " ns")
-print("Política de Substituição: " + politicasubstituicao)
-
-print("Total de endereços no arquivo de entrada: " + str(i))
-print("Total de escritas: " + str(enderecosescrita))
-print("Total de leituras: " + str(enderecosleitura))
-print("Total de escritas e leituras da memória principal: " + str(enderecosescrita + enderecosleitura))
-
-print("Taxa de acerto (hit rate): especificar esta taxa por leitura, escrita e global (colocar ao lado a quantidade);")
-#ainda falta fazer a simulação para calcular a taxa de acerto
-
-print("Tempo médio de acesso da cache (em ns): utilizar a fórmula vista em aula;")
-#ainda falta fazer a simulação para calcular o tempo médio de acesso
+print(f"Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} - Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) - Acesso:  {tempo_medio_acesso:.4f} ns")
