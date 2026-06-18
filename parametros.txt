@@ -12,41 +12,41 @@ Parâmetros fixos:
 ---------------------------------------------------------------------------------------------------
 Configuração fixa: Bloco = 128 bytes, Escrita = 0 (Write-Through), Substituição = LRU, Via = 4
 
-# Para 8 linhas (Cache 1KB):   0 128   8 4 4 LRU 60 | Escritas MP: 6144 - Leituras MP: 23040 - Global:  48.8636% (22016) - Leitura: 48.8636% (22016) - Escrita: 0.0000% (0) - Acesso:  34.6818 ns
-# Para 16 linhas (Cache 2KB):  0 128  16 4 4 LRU 60 | Escritas MP: 6144 - Leituras MP: 20993 - Global:  53.4069% (24063) - Leitura: 53.4069% (24063) - Escrita: 0.0000% (0) - Acesso:  31.9559 ns
-# Para 32 linhas (Cache 4KB):  0 128  32 4 4 LRU 60 | Escritas MP: 6144 - Leituras MP: 14859 - Global:  67.0210% (30197) - Leitura: 67.0210% (30197) - Escrita: 0.0000% (0) - Acesso:  23.7874 ns
-# Para 64 linhas (Cache 8KB):  0 128  64 4 4 LRU 60 | Escritas MP: 6144 - Leituras MP: 3106  - Global:  93.1064% (41950) - Leitura: 93.1064% (41950) - Escrita: 0.0000% (0) - Acesso:  8.1362 ns
-# Para 128 linhas (Cache 16KB):0 128 128 4 4 LRU 60 | Escritas MP: 6144 - Leituras MP: 40    - Global:  99.9112% (45016) - Leitura: 99.9112% (45016) - Escrita: 0.0000% (0) - Acesso:  4.0533 ns
-# Para 256 linhas (Cache 32KB):0 128 256 4 4 LRU 60 | Escritas MP: 6144 - Leituras MP: 40    - Global:  99.9112% (45016) - Leitura: 99.9112% (45016) - Escrita: 0.0000% (0) - Acesso:  4.0533 ns
+# Para 8 linhas (Cache 1KB):    "0 128   8 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 25088 - Global:  51.0000% (26112) - Leitura: 48.8636% (22016) - Escrita: 66.6667% (4096) - Acesso:  33.4000 ns
+# Para 16 linhas (Cache 2KB):   "0 128  16 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 23552 - Global:  54.0000% (27648) - Leitura: 52.2727% (23552) - Escrita: 66.6667% (4096) - Acesso:  31.6000 ns
+# Para 32 linhas (Cache 4KB):   "0 128  32 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 17418 - Global:  65.9805% (33782) - Leitura: 65.8869% (29686) - Escrita: 66.6667% (4096) - Acesso:  24.4117 ns
+# Para 64 linhas (Cache 8KB):   "0 128  64 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 3621 - Global:  92.9277% (47579) - Leitura: 93.1064% (41950) - Escrita: 91.6178% (5629) - Acesso:  8.2434 ns
+# Para 128 linhas (Cache 16KB): "0 128 128 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 2599 - Global:  94.9238% (48601) - Leitura: 95.3746% (42972) - Escrita: 91.6178% (5629) - Acesso:  7.0457 ns
+# Para 256 linhas (Cache 32KB): "0 128 256 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 44 - Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) - Acesso:  4.0516 ns
 
 ---------------------------------------------------------------------------------------------------
 2° CENÁRIO: IMPACTO DO TAMANHO DO BLOCO
 ---------------------------------------------------------------------------------------------------
 Configuração fixa: Cache Total = 8 KB (8.192 bytes), Escrita = 0 (Write-Through), Substituição = LRU, Via = 2
 
-# Bloco de 8 bytes (1024 linhas):   0 8 1024 2 4 LRU 60
-# Bloco de 16 bytes (512 linhas):   0 16 512 2 4 LRU 60
-# Bloco de 32 bytes (256 linhas):   0 32 256 2 4 LRU 60
-# Bloco de 64 bytes (128 linhas):   0 64 128 2 4 LRU 60
-# Bloco de 128 bytes (64 linhas):   0 128 64 2 4 LRU 60
-# Bloco de 256 bytes (32 linhas):   0 256 32 2 4 LRU 60
-# Bloco de 512 bytes (16 linhas):   0 512 16 2 4 LRU 60
-# Bloco de 1024 bytes (8 linhas):   0 1024 8 2 4 LRU 60
-# Bloco de 2048 bytes (4 linhas):   0 2048 4 2 4 LRU 60
-# Bloco de 4096 bytes (2 linhas):   0 4096 2 2 4 LRU 60
+# Bloco de 8 bytes (1024 linhas):  "0 8 1024 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 1627 - Global:  96.8223% (49573) - Leitura: 96.4023% (43435) - Escrita: 99.9023% (6138) - Acesso:  5.9066 ns
+# Bloco de 16 bytes (512 linhas):  "0 16 512 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 1626 - Global:  96.8242% (49574) - Leitura: 96.4023% (43435) - Escrita: 99.9186% (6139) - Acesso:  5.9055 ns
+# Bloco de 32 bytes (256 linhas):  "0 32 256 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 5202 - Global:  89.8398% (45998) - Leitura: 90.7315% (40880) - Escrita: 83.3008% (5118) - Acesso:  10.0961 ns
+# Bloco de 64 bytes (128 linhas):  "0 64 128 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 5170 - Global:  89.9023% (46030) - Leitura: 90.8026% (40912) - Escrita: 83.3008% (5118) - Acesso:  10.0586 ns
+# Bloco de 128 bytes (64 linhas):  "0 128 64 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 6176 - Global:  87.9375% (45024) - Leitura: 88.5698% (39906) - Escrita: 83.3008% (5118) - Acesso:  11.2375 ns
+# Bloco de 256 bytes (32 linhas):  "0 256 32 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 8721 - Global:  82.9668% (42479) - Leitura: 84.0554% (37872) - Escrita: 74.9837% (4607) - Acesso:  14.2199 ns
+# Bloco de 512 bytes (16 linhas):  "0 512 16 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 11782 - Global:  76.9883% (39418) - Leitura: 77.2616% (34811) - Escrita: 74.9837% (4607) - Acesso:  17.8070 ns
+# Bloco de 1024 bytes (8 linhas):  "0 1024 8 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 14848 - Global:  71.0000% (36352) - Leitura: 71.5909% (32256) - Escrita: 66.6667% (4096) - Acesso:  21.4000 ns
+# Bloco de 2048 bytes (4 linhas):  "0 2048 4 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 14848 - Global:  71.0000% (36352) - Leitura: 71.5909% (32256) - Escrita: 66.6667% (4096) - Acesso:  21.4000 ns
+# Bloco de 4096 bytes (2 linhas):  "0 4096 2 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 19456 - Global:  62.0000% (31744) - Leitura: 61.3636% (27648) - Escrita: 66.6667% (4096) - Acesso:  26.8000 ns
 
 ---------------------------------------------------------------------------------------------------
 3° CENÁRIO: IMPACTO DA ASSOCIATIVIDADE
 ---------------------------------------------------------------------------------------------------
 Configuração fixa: Bloco = 128 bytes, Cache Total = 8 KB (64 linhas), Escrita = 1 (Write-Back), Substituição = LRU
 
-# Associatividade 1 (Mapeamento Direto): 1 128 64  1 4 LRU 60
-# Associatividade 2:                     1 128 64  2 4 LRU 60
-# Associatividade 4:                     1 128 64  4 4 LRU 60
-# Associatividade 8:                     1 128 64  8 4 LRU 60
-# Associatividade 16:                    1 128 64 16 4 LRU 60
-# Associatividade 32:                    1 128 64 32 4 LRU 60
-# Associatividade 64 (Total. Assoc.):    1 128 64 64 4 LRU 60
+# Associatividade 1 (Mapeamento Direto): "1 128 64  1 4 LRU 60", | Escritas MP: 2048 - Leituras MP: 12822 - Global:  74.9570% (38378) - Leitura: 76.0875% (34282) - Escrita: 66.6667% (4096) - Acesso:  19.0258 ns
+# Associatividade 2:                     "1 128 64  2 4 LRU 60", | Escritas MP: 1026 - Leituras MP: 6176 - Global:  87.9375% (45024) - Leitura: 88.5698% (39906) - Escrita: 83.3008% (5118) - Acesso:  11.2375 ns
+# Associatividade 4:                     "1 128 64  4 4 LRU 60", | Escritas MP: 515 - Leituras MP: 3621 - Global:  92.9277% (47579) - Leitura: 93.1064% (41950) - Escrita: 91.6178% (5629) - Acesso:  8.2434 ns
+# Associatividade 8:                     "1 128 64  8 4 LRU 60", | Escritas MP: 1026 - Leituras MP: 5154 - Global:  89.9336% (46046) - Leitura: 90.8381% (40928) - Escrita: 83.3008% (5118) - Acesso:  10.0398 ns
+# Associatividade 16:                    "1 128 64 16 4 LRU 60", | Escritas MP: 4 - Leituras MP: 44 - Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) - Acesso:  4.0516 ns
+# Associatividade 32:                    "1 128 64 32 4 LRU 60", | Escritas MP: 4 - Leituras MP: 44 - Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) - Acesso:  4.0516 ns
+# Associatividade 64 (Total. Assoc.):    "1 128 64 64 4 LRU 60", | Escritas MP: 4 - Leituras MP: 44 - Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) - Acesso:  4.0516 ns
 
 ---------------------------------------------------------------------------------------------------
 4° CENÁRIO: IMPACTO DA POLÍTICA DE SUBSTITUIÇÃO
@@ -54,39 +54,39 @@ Configuração fixa: Bloco = 128 bytes, Cache Total = 8 KB (64 linhas), Escrita 
 Configuração fixa: Bloco = 128 bytes, Escrita = 0 (Write-Through), Via = 4
 
 RODADA A: Substituição LRU
-# 16 linhas:  0 128  16 4 4 LRU 60
-# 32 linhas:  0 128  32 4 4 LRU 60
-# 64 linhas:  0 128  64 4 4 LRU 60
-# 128 linhas: 0 128 128 4 4 LRU 60
-# 256 linhas: 0 128 256 4 4 LRU 60
+# 16 linhas:  "0 128  16 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 23552 - Global:  54.0000% (27648) - Leitura: 52.2727% (23552) - Escrita: 66.6667% (4096) - Acesso:  31.6000 ns
+# 32 linhas:  "0 128  32 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 17418 - Global:  65.9805% (33782) - Leitura: 65.8869% (29686) - Escrita: 66.6667% (4096) - Acesso:  24.4117 ns
+# 64 linhas:  "0 128  64 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 3621 - Global:  92.9277% (47579) - Leitura: 93.1064% (41950) - Escrita: 91.6178% (5629) - Acesso:  8.2434 ns
+# 128 linhas: "0 128 128 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 2599 - Global:  94.9238% (48601) - Leitura: 95.3746% (42972) - Escrita: 91.6178% (5629) - Acesso:  7.0457 ns
+# 256 linhas: "0 128 256 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 44 - Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) - Acesso:  4.0516 ns
 
 RODADA B: Substituição Aleatória
-# 16 linhas:  0 128  16 4 4 ALEATORIA 60
-# 32 linhas:  0 128  32 4 4 ALEATORIA 60
-# 64 linhas:  0 128  64 4 4 ALEATORIA 60
-# 128 linhas: 0 128 128 4 4 ALEATORIA 60
-# 256 linhas: 0 128 256 4 4 ALEATORIA 60
+# 16 linhas:  "0 128  16 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 23107 - Global:  54.8691% (28093) - Leitura: 53.0518% (23903) - Escrita: 68.1966% (4190) - Acesso:  31.0785 ns
+# 32 linhas:  "0 128  32 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 14006 - Global:  72.6445% (37194) - Leitura: 73.0624% (32919) - Escrita: 69.5801% (4275) - Acesso:  20.4133 ns
+# 64 linhas:  "0 128  64 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 2678 - Global:  94.7695% (48522) - Leitura: 94.8952% (42756) - Escrita: 93.8477% (5766) - Acesso:  7.1383 ns
+# 128 linhas: "0 128 128 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 1066 - Global:  97.9180% (50134) - Leitura: 98.1112% (44205) - Escrita: 96.5007% (5929) - Acesso:  5.2492 ns
+# 256 linhas: "0 128 256 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 44 - Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) - Acesso:  4.0516 ns
 
 ---------------------------------------------------------------------------------------------------
 5° CENÁRIO: LARGURA DE BANDA DA MEMÓRIA
 ---------------------------------------------------------------------------------------------------
 RODADA 1: Política Write-Through (Parâmetro Inicial = 0)
-# Cache 8K, Bloco 64, Via 2:   0  64 128 2 4 LRU 60
-# Cache 8K, Bloco 64, Via 4:   0  64 128 4 4 LRU 60
-# Cache 8K, Bloco 128, Via 2:  0 128  64 2 4 LRU 60
-# Cache 8K, Bloco 128, Via 4:  0 128  64 4 4 LRU 60
-# Cache 16K, Bloco 64, Via 2:  0  64 256 2 4 LRU 60
-# Cache 16K, Bloco 64, Via 4:  0  64 256 4 4 LRU 60
-# Cache 16K, Bloco 128, Via 2: 0 128 128 2 4 LRU 60
-# Cache 16K, Bloco 128, Via 4: 0 128 128 4 4 LRU 60
+# Cache 8K, Bloco 64, Via 2:   "0  64 128 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 5170 - Global:  89.9023% (46030) - Leitura: 90.8026% (40912) - Escrita: 83.3008% (5118) - Acesso:  10.0586 ns
+# Cache 8K, Bloco 64, Via 4:   "0  64 128 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 3126 - Global:  93.8945% (48074) - Leitura: 94.2050% (42445) - Escrita: 91.6178% (5629) - Acesso:  7.6633 ns
+# Cache 8K, Bloco 128, Via 2:  "0 128  64 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 6176 - Global:  87.9375% (45024) - Leitura: 88.5698% (39906) - Escrita: 83.3008% (5118) - Acesso:  11.2375 ns
+# Cache 8K, Bloco 128, Via 4:  "0 128  64 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 3621 - Global:  92.9277% (47579) - Leitura: 93.1064% (41950) - Escrita: 91.6178% (5629) - Acesso:  8.2434 ns
+# Cache 16K, Bloco 64, Via 2:  "0  64 256 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 2615 - Global:  94.8926% (48585) - Leitura: 96.4733% (43467) - Escrita: 83.3008% (5118) - Acesso:  7.0645 ns
+# Cache 16K, Bloco 64, Via 4:  "0  64 256 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 2615 - Global:  94.8926% (48585) - Leitura: 95.3391% (42956) - Escrita: 91.6178% (5629) - Acesso:  7.0645 ns
+# Cache 16K, Bloco 128, Via 2: "0 128 128 2 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 3621 - Global:  92.9277% (47579) - Leitura: 94.2405% (42461) - Escrita: 83.3008% (5118) - Acesso:  8.2434 ns
+# Cache 16K, Bloco 128, Via 4: "0 128 128 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 2599 - Global:  94.9238% (48601) - Leitura: 95.3746% (42972) - Escrita: 91.6178% (5629) - Acesso:  7.0457 ns
 
 RODADA 2: Política Write-Back (Parâmetro Inicial = 1)
-# Cache 8K, Bloco 64, Via 2:   1  64 128 2 4 LRU 60
-# Cache 8K, Bloco 64, Via 4:   1  64 128 4 4 LRU 60
-# Cache 8K, Bloco 128, Via 2:  1 128  64 2 4 LRU 60
-# Cache 8K, Bloco 128, Via 4:  1 128  64 4 4 LRU 60
-# Cache 16K, Bloco 64, Via 2:  1  64 256 2 4 LRU 60
-# Cache 16K, Bloco 64, Via 4:  1  64 256 4 4 LRU 60
-# Cache 16K, Bloco 128, Via 2: 1 128 128 2 4 LRU 60
-# Cache 16K, Bloco 128, Via 4: 1 128 128 4 4 LRU 60
+# Cache 8K, Bloco 64, Via 2:   "1  64 128 2 4 LRU 60", | Escritas MP: 1026 - Leituras MP: 5170 - Global:  89.9023% (46030) - Leitura: 90.8026% (40912) - Escrita: 83.3008% (5118) - Acesso:  10.0586 ns
+# Cache 8K, Bloco 64, Via 4:   "1  64 128 4 4 LRU 60", | Escritas MP: 515 - Leituras MP: 3126 - Global:  93.8945% (48074) - Leitura: 94.2050% (42445) - Escrita: 91.6178% (5629) - Acesso:  7.6633 ns
+# Cache 8K, Bloco 128, Via 2:  "1 128  64 2 4 LRU 60", | Escritas MP: 1026 - Leituras MP: 6176 - Global:  87.9375% (45024) - Leitura: 88.5698% (39906) - Escrita: 83.3008% (5118) - Acesso:  11.2375 ns
+# Cache 8K, Bloco 128, Via 4:  "1 128  64 4 4 LRU 60", | Escritas MP: 515 - Leituras MP: 3621 - Global:  92.9277% (47579) - Leitura: 93.1064% (41950) - Escrita: 91.6178% (5629) - Acesso:  8.2434 ns
+# Cache 16K, Bloco 64, Via 2:  "1  64 256 2 4 LRU 60", | Escritas MP: 1026 - Leituras MP: 2615 - Global:  94.8926% (48585) - Leitura: 96.4733% (43467) - Escrita: 83.3008% (5118) - Acesso:  7.0645 ns
+# Cache 16K, Bloco 64, Via 4:  "1  64 256 4 4 LRU 60", | Escritas MP: 515 - Leituras MP: 2615 - Global:  94.8926% (48585) - Leitura: 95.3391% (42956) - Escrita: 91.6178% (5629) - Acesso:  7.0645 ns
+# Cache 16K, Bloco 128, Via 2: "1 128 128 2 4 LRU 60", | Escritas MP: 1026 - Leituras MP: 3621 - Global:  92.9277% (47579) - Leitura: 94.2405% (42461) - Escrita: 83.3008% (5118) - Acesso:  8.2434 ns
+# Cache 16K, Bloco 128, Via 4: "1 128 128 4 4 LRU 60", | Escritas MP: 515 - Leituras MP: 2599 - Global:  94.9238% (48601) - Leitura: 95.3746% (42972) - Escrita: 91.6178% (5629) - Acesso:  7.0457 ns
 ===================================================================================================
