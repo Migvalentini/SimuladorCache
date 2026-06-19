@@ -28,14 +28,16 @@ else:
     simulacoes = "simulacoes/oficial.txt"
 
 entradas = [    
-    "1  64 128 2 4 LRU 60",
-    "1  64 128 4 4 LRU 60",
-    "1 128  64 2 4 LRU 60",
-    "1 128  64 4 4 LRU 60",
-    "1  64 256 2 4 LRU 60",
-    "1  64 256 4 4 LRU 60",
-    "1 128 128 2 4 LRU 60",
-    "1 128 128 4 4 LRU 60",
+"0 8 1024 2 4 LRU 60",
+"0 16 512 2 4 LRU 60",
+"0 32 256 2 4 LRU 60",
+"0 64 128 2 4 LRU 60",
+"0 128 64 2 4 LRU 60",
+"0 256 32 2 4 LRU 60",
+"0 512 16 2 4 LRU 60",
+"0 1024 8 2 4 LRU 60",
+"0 2048 4 2 4 LRU 60",
+"0 4096 2 2 4 LRU 60",
 ]
 
 def main(entrada):
@@ -193,7 +195,7 @@ def main(entrada):
     #print(f"CÁLCULOS PARA A CONFIGURAÇÃO DA CACHE: Tamanho do endereço: {enderecocache} bits | Número de conjuntos: {numero_conjuntos} | Número de bits para o rótulo: {rotulo} | Número de bits para o conjunto: {conjunto} | Número de bits para a palavra: {palavra}")
     #print(f"RESULTADOS DA SIMULAÇÃO: Endereços no arquivo de entrada: {i} | Escritas: {escritas} | Leituras: {leituras} | Escritas da MP: {escritasMP} | Leituras da MP: {leiturasMP}")
     #print(f"ESTATÍSTICAS FINAIS: Taxa de acerto global:  {taxa_hit_global * 100:.4f}% ({total_hits}) | Taxa de acerto leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) | Taxa de acerto escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Tempo médio de acesso:  {tempo_medio_acesso:.4f} ns")
-    print(f"{politicaescrita} {tamanholinha} {numerolinhas} {associatividade} {tempoacesso} {politicasubstituicao} {tempomemoria} | Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} - Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) - Acesso:  {tempo_medio_acesso:.4f} ns")
+    print(f"{politicaescrita} {tamanholinha} {numerolinhas} {associatividade} {tempoacesso} {politicasubstituicao} {tempomemoria} | Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} | Escritas: {escritas} - Leituras: {leituras} - Total: {i} | Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Acesso:  {tempo_medio_acesso:.4f} ns")
     #print("-" * 100)
 
 for i in range(len(entradas)):
