@@ -1,43 +1,14 @@
 import math
 import random
 
-def salvar_estado_cache(cache, nome_arquivo):
-    with open(nome_arquivo, "w", encoding="utf-8") as f:
-        f.write("=== VISUALIZAÇÃO DA MEMÓRIA CACHE ===\n")
-        f.write(f"Total de Conjuntos: {len(cache)}\n")
-        f.write(f"Linhas por Conjunto (Vias): {len(cache[0])}\n")
-        f.write("-" * 50 + "\n\n")
-        
-        for i_conjunto, conjunto in enumerate(cache):
-            f.write(f"Conjunto {i_conjunto:04d}:\n")
-            
-            for i_linha, linha in enumerate(conjunto):                
-                if linha["rotulo"] is not None:
-                    rotulo_str = f"0x{linha['rotulo']:04X} ({linha['rotulo']})"
-                else:
-                    rotulo_str = "--------"
-                
-                f.write(f"  [Via {i_linha}] Rótulo: {rotulo_str:<12} | Dirty: {linha['dirty']} | LRU: {linha['lru']}\n")
-            
-            f.write("  " + "-" * 45 + "\n")
-
-teste = False
-if teste:
-    simulacoes = "simulacoes/teste.txt"
-else:
-    simulacoes = "simulacoes/oficial.txt"
-
 entradas = [    
-"0 8 1024 2 4 LRU 60",
-"0 16 512 2 4 LRU 60",
-"0 32 256 2 4 LRU 60",
-"0 64 128 2 4 LRU 60",
-"0 128 64 2 4 LRU 60",
-"0 256 32 2 4 LRU 60",
-"0 512 16 2 4 LRU 60",
-"0 1024 8 2 4 LRU 60",
-"0 2048 4 2 4 LRU 60",
-"0 4096 2 2 4 LRU 60",
+"0 128  16 4 4 LRU 60",
+"0 128  32 4 4 LRU 60",
+"0 128  64 4 4 LRU 60",
+"0 128 128 4 4 LRU 60",
+"0 128 256 4 4 LRU 60",
+"0 128 512 4 4 LRU 60",
+"0 128 1024 4 4 LRU 60",
 ]
 
 def main(entrada):
@@ -56,7 +27,7 @@ def main(entrada):
     palavra = int(math.log2(tamanholinha)) # Número de bits para a palavra
     conjunto = int(math.log2(numero_conjuntos)) # Número de bits para o conjunto
     rotulo = int(enderecocache - palavra - conjunto) # Número de bits para o rótulo
-
+   
     cache = []
 
     # Inicialização da cache
@@ -81,7 +52,7 @@ def main(entrada):
     i = 0
 
     # Processamento do arquivo de simulações
-    with open(simulacoes) as f:
+    with open("simulacoes/oficial.txt") as f:
         for x in f:
             i += 1
             
@@ -123,8 +94,7 @@ def main(entrada):
                 leituras += 1
 
             if hit:
-                if teste:
-                    print(f"HIT  | O bloco {rotulo_int:08d}  já estava no conjunto {conjunto_int:08d} | Endereço: {endereco} | Operação: {operacao} - Binário: {enderecorotulo}|{enderecoconjunto}|{enderecopalavra} - Rótulo: {enderecorotulo} ({rotulo_int:08d}) - Conjunto: {enderecoconjunto} ({conjunto_int:08d}) - Palavra: {enderecopalavra} ({palavra_int:08d})")
+                #print(f"HIT  | O bloco {rotulo_int:08d}  já estava no conjunto {conjunto_int:08d} | Endereço: {endereco} | Operação: {operacao} - Binário: {enderecorotulo}|{enderecoconjunto}|{enderecopalavra} - Rótulo: {enderecorotulo} ({rotulo_int:08d}) - Conjunto: {enderecoconjunto} ({conjunto_int:08d}) - Palavra: {enderecopalavra} ({palavra_int:08d})")
                 if politicasubstituicao == "LRU":
                     for l in conjunto_alvo:
                         if l != linha_atingida and l["rotulo"] is not None:
@@ -139,8 +109,7 @@ def main(entrada):
                 else:
                     hitLeitura += 1
             else:
-                if teste:
-                    print(f"MISS | O bloco {rotulo_int:08d} não estava no conjunto {conjunto_int:08d} | Endereço: {endereco} | Operação: {operacao} - Binário: {enderecorotulo}|{enderecoconjunto}|{enderecopalavra} - Rótulo: {enderecorotulo} ({rotulo_int:08d}) - Conjunto: {enderecoconjunto} ({conjunto_int:08d}) - Palavra: {enderecopalavra} ({palavra_int:08d})")        
+                #print(f"MISS | O bloco {rotulo_int:08d} não estava no conjunto {conjunto_int:08d} | Endereço: {endereco} | Operação: {operacao} - Binário: {enderecorotulo}|{enderecoconjunto}|{enderecopalavra} - Rótulo: {enderecorotulo} ({rotulo_int:08d}) - Conjunto: {enderecoconjunto} ({conjunto_int:08d}) - Palavra: {enderecopalavra} ({palavra_int:08d})")        
 
                 leiturasMP += 1
                 
@@ -182,8 +151,6 @@ def main(entrada):
                     if linha["rotulo"] is not None and linha["dirty"] == 1:
                         escritasMP += 1
 
-    #salvar_estado_cache(cache,  "dados/resultado.txt")
-
     total_hits = hitLeitura + hitEscrita
     taxa_hit_global  = (total_hits / i) if i > 0 else 0.0
     taxa_hit_leitura = (hitLeitura / leituras) if leituras > 0 else 0.0
@@ -195,8 +162,13 @@ def main(entrada):
     #print(f"CÁLCULOS PARA A CONFIGURAÇÃO DA CACHE: Tamanho do endereço: {enderecocache} bits | Número de conjuntos: {numero_conjuntos} | Número de bits para o rótulo: {rotulo} | Número de bits para o conjunto: {conjunto} | Número de bits para a palavra: {palavra}")
     #print(f"RESULTADOS DA SIMULAÇÃO: Endereços no arquivo de entrada: {i} | Escritas: {escritas} | Leituras: {leituras} | Escritas da MP: {escritasMP} | Leituras da MP: {leiturasMP}")
     #print(f"ESTATÍSTICAS FINAIS: Taxa de acerto global:  {taxa_hit_global * 100:.4f}% ({total_hits}) | Taxa de acerto leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) | Taxa de acerto escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Tempo médio de acesso:  {tempo_medio_acesso:.4f} ns")
-    print(f"{politicaescrita} {tamanholinha} {numerolinhas} {associatividade} {tempoacesso} {politicasubstituicao} {tempomemoria} | Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} | Escritas: {escritas} - Leituras: {leituras} - Total: {i} | Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Acesso:  {tempo_medio_acesso:.4f} ns")
+    
+    #A linha abaixo é a linha de saída final, formatada para facilitar a leitura e comparação entre as simulações. Ela inclui os parâmetros de entrada, as estatísticas de acertos e erros, e o tempo médio de acesso.
+    #print(f"{politicaescrita} {tamanholinha} {numerolinhas} {associatividade} {tempoacesso} {politicasubstituicao} {tempomemoria} | Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} | Escritas: {escritas} - Leituras: {leituras} - Total: {i} | Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Acesso:  {tempo_medio_acesso:.4f} ns")
     #print("-" * 100)
+    
+    print(f"Tamanho da cache: {numerolinhas * (tamanholinha)} | {politicaescrita} {tamanholinha} {numerolinhas} {associatividade} {tempoacesso} {politicasubstituicao} {tempomemoria} | Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} | Escritas: {escritas} - Leituras: {leituras} - Total: {i} | Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Acesso:  {tempo_medio_acesso:.4f} ns")
+    
 
 for i in range(len(entradas)):
     main(entradas[i])

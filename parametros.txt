@@ -2,7 +2,13 @@
                     LISTA DE PARÂMETROS (Hit Time: 4ns | Memória: 60ns)
 ===================================================================================================
 Formato esperado pelo simulador:
-[Política de Escrita] [Tamanho da Linha/Bloco] [Número de Linhas] [Associatividade] [Hit Time] [Substituição] [Tempo MP]
+1 - Política de escrita: 0 - write-through e 1 - write-back;
+2 - Tamanho da linha: deve ser potência de 2, em bytes;
+3 - Número de linhas: deve ser potência de 2;
+4 - Associatividade (número de linhas) por conjunto: deve ser potência de 2 (mínimo 1 e máximo igual ao número de linhas);
+5 - Tempo de acesso quando encontra (hit time): em nanossegundos;
+6 - Política de Substituição: LRU (Least Recently Used) ou Aleatória;
+7 - Tempos de leitura/escrita: em nanossegundos.
 
 Parâmetros fixos:
 - Tempo de acerto na cache = 4 ns
@@ -18,6 +24,7 @@ Configuração fixa: Bloco = 128 bytes, Escrita = 0 (Write-Through), Substituiç
 # Para 64 linhas (Cache 8KB):   "0 128  64 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 3621  | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  92.9277% (47579) - Leitura: 93.1064% (41950) - Escrita: 91.6178% (5629) | Acesso:  8.2434 ns
 # Para 128 linhas (Cache 16KB): "0 128 128 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 2599  | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  94.9238% (48601) - Leitura: 95.3746% (42972) - Escrita: 91.6178% (5629) | Acesso:  7.0457 ns
 # Para 256 linhas (Cache 32KB): "0 128 256 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 44    | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) | Acesso:  4.0516 ns
+# Para 512 linhas (Cache 64KB): "0 128 512 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 44    | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) | Acesso:  4.0516 ns
 
 ---------------------------------------------------------------------------------------------------
 2° CENÁRIO: IMPACTO DO TAMANHO DO BLOCO
@@ -59,6 +66,7 @@ RODADA A: Substituição LRU
 # 64 linhas:  "0 128  64 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 3621 | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  92.9277% (47579) - Leitura: 93.1064% (41950) - Escrita: 91.6178% (5629) | Acesso:  8.2434 ns
 # 128 linhas: "0 128 128 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 2599 | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  94.9238% (48601) - Leitura: 95.3746% (42972) - Escrita: 91.6178% (5629) | Acesso:  7.0457 ns
 # 256 linhas: "0 128 256 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 44 | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) | Acesso:  4.0516 ns
+# 512 linhas: "0 128 512 4 4 LRU 60", | Escritas MP: 6144 - Leituras MP: 44 | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) | Acesso:  4.0516 ns
 
 RODADA B: Substituição Aleatória
 # 16 linhas:  "0 128  16 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 23083 | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  54.9160% (28117) - Leitura: 53.0828% (23917) - Escrita: 68.3594% (4200) | Acesso:  31.0504 ns
@@ -66,6 +74,7 @@ RODADA B: Substituição Aleatória
 # 64 linhas:  "0 128  64 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 2687 | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  94.7520% (48513) - Leitura: 94.8730% (42746) - Escrita: 93.8639% (5767) | Acesso:  7.1488 ns
 # 128 linhas: "0 128 128 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 1061 | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  97.9277% (50139) - Leitura: 98.1157% (44207) - Escrita: 96.5495% (5932) | Acesso:  5.2434 ns
 # 256 linhas: "0 128 256 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 44 | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) | Acesso:  4.0516 ns
+# 512 linhas: "0 128 512 4 4 ALEATORIA 60", | Escritas MP: 6144 - Leituras MP: 44 | Escritas: 6144 - Leituras: 45056 - Total: 51200 | Global:  99.9141% (51156) - Leitura: 99.9112% (45016) - Escrita: 99.9349% (6140) | Acesso:  4.0516 ns
 
 ---------------------------------------------------------------------------------------------------
 5° CENÁRIO: LARGURA DE BANDA DA MEMÓRIA
