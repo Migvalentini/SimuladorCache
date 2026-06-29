@@ -59,25 +59,11 @@ def main(entrada):
             endereco = x.split()[0]
             operacao = x.split()[1]
             
-            tamanho = len(endereco) * 4
-            binario = f"{int(endereco, 16):b}".zfill(tamanho)
-            
-            if conjunto == 0:
-                enderecorotulo = binario[:-palavra]
-                enderecoconjunto = ""
-                enderecopalavra = binario[-palavra:]
+            endereco_int = int(endereco, 16)
 
-                rotulo_int = int(enderecorotulo, 2)
-                conjunto_int = 0
-                palavra_int = int(enderecopalavra, 2)
-            else:
-                enderecorotulo = binario[:-(palavra + conjunto)]
-                enderecoconjunto = binario[-(palavra + conjunto):-palavra]
-                enderecopalavra = binario[-palavra:]
-
-                rotulo_int = int(enderecorotulo, 2)
-                conjunto_int = int(enderecoconjunto, 2)
-                palavra_int = int(enderecopalavra, 2)
+            palavra_int = endereco_int & ((1 << palavra) - 1)
+            conjunto_int = (endereco_int >> palavra) & ((1 << conjunto) - 1) if conjunto > 0 else 0
+            rotulo_int = endereco_int >> (palavra + conjunto)
             
             conjunto_alvo = cache[conjunto_int] 
             hit = False
@@ -94,7 +80,6 @@ def main(entrada):
                 leituras += 1
 
             if hit:
-                #print(f"HIT  | O bloco {rotulo_int:08d}  já estava no conjunto {conjunto_int:08d} | Endereço: {endereco} | Operação: {operacao} - Binário: {enderecorotulo}|{enderecoconjunto}|{enderecopalavra} - Rótulo: {enderecorotulo} ({rotulo_int:08d}) - Conjunto: {enderecoconjunto} ({conjunto_int:08d}) - Palavra: {enderecopalavra} ({palavra_int:08d})")
                 if politicasubstituicao == "LRU":
                     for l in conjunto_alvo:
                         if l != linha_atingida and l["rotulo"] is not None:
@@ -109,8 +94,6 @@ def main(entrada):
                 else:
                     hitLeitura += 1
             else:
-                #print(f"MISS | O bloco {rotulo_int:08d} não estava no conjunto {conjunto_int:08d} | Endereço: {endereco} | Operação: {operacao} - Binário: {enderecorotulo}|{enderecoconjunto}|{enderecopalavra} - Rótulo: {enderecorotulo} ({rotulo_int:08d}) - Conjunto: {enderecoconjunto} ({conjunto_int:08d}) - Palavra: {enderecopalavra} ({palavra_int:08d})")        
-
                 leiturasMP += 1
                 
                 linha_alvo = None
@@ -158,16 +141,14 @@ def main(entrada):
     taxa_miss_global = 1.0 - taxa_hit_global  
     tempo_medio_acesso = tempoacesso + (taxa_miss_global * tempomemoria)
 
+    print(f"{politicaescrita} {tamanholinha} {numerolinhas} {associatividade} {tempoacesso} {politicasubstituicao} {tempomemoria} | Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} | Escritas: {escritas} - Leituras: {leituras} - Total: {i} | Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Acesso:  {tempo_medio_acesso:.4f} ns")
     #print(f"PARÂMETROS DE ENTRADA: Política de escrita: {politicaescrita} = {'write-through' if politicaescrita == 0 else 'write-back'} | Tamanho da linhas: {tamanholinha} | Número de linhas: {numerolinhas} | Associatividade: {associatividade} | Tempo de acesso: {tempoacesso} ns | Política de substituição: {politicasubstituicao} | Tempo de leitura/escrita: {tempomemoria} ns")
     #print(f"CÁLCULOS PARA A CONFIGURAÇÃO DA CACHE: Tamanho do endereço: {enderecocache} bits | Número de conjuntos: {numero_conjuntos} | Número de bits para o rótulo: {rotulo} | Número de bits para o conjunto: {conjunto} | Número de bits para a palavra: {palavra}")
     #print(f"RESULTADOS DA SIMULAÇÃO: Endereços no arquivo de entrada: {i} | Escritas: {escritas} | Leituras: {leituras} | Escritas da MP: {escritasMP} | Leituras da MP: {leiturasMP}")
     #print(f"ESTATÍSTICAS FINAIS: Taxa de acerto global:  {taxa_hit_global * 100:.4f}% ({total_hits}) | Taxa de acerto leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) | Taxa de acerto escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Tempo médio de acesso:  {tempo_medio_acesso:.4f} ns")
-    
-    #A linha abaixo é a linha de saída final, formatada para facilitar a leitura e comparação entre as simulações. Ela inclui os parâmetros de entrada, as estatísticas de acertos e erros, e o tempo médio de acesso.
-    #print(f"{politicaescrita} {tamanholinha} {numerolinhas} {associatividade} {tempoacesso} {politicasubstituicao} {tempomemoria} | Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} | Escritas: {escritas} - Leituras: {leituras} - Total: {i} | Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Acesso:  {tempo_medio_acesso:.4f} ns")
     #print("-" * 100)
     
-    print(f"Tamanho da cache: {numerolinhas * (tamanholinha)} | {politicaescrita} {tamanholinha} {numerolinhas} {associatividade} {tempoacesso} {politicasubstituicao} {tempomemoria} | Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} | Escritas: {escritas} - Leituras: {leituras} - Total: {i} | Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Acesso:  {tempo_medio_acesso:.4f} ns")
+    #print(f"Tamanho da cache: {numerolinhas * (tamanholinha)} | {politicaescrita} {tamanholinha} {numerolinhas} {associatividade} {tempoacesso} {politicasubstituicao} {tempomemoria} | Escritas MP: {escritasMP} - Leituras MP: {leiturasMP} | Escritas: {escritas} - Leituras: {leituras} - Total: {i} | Global:  {taxa_hit_global * 100:.4f}% ({total_hits}) - Leitura: {taxa_hit_leitura * 100:.4f}% ({hitLeitura}) - Escrita: {taxa_hit_escrita * 100:.4f}% ({hitEscrita}) | Acesso:  {tempo_medio_acesso:.4f} ns")
     
 
 for i in range(len(entradas)):
